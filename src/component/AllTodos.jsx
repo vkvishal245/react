@@ -1,10 +1,20 @@
 import React from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { removeTodo } from "../Feature/todoSlice";
-import todos from "../Feature/todoSlice";
+import { removeTodo, editTodo,toggleTodo } from "../Feature/todoSlice";
+
 function AllTodos() {
   const todos = useSelector((state) => state.todos);
   const dispatch = useDispatch();
+
+  const handleEdit = (id, text) => {
+    const temp = { id, text };
+    console.log(temp);
+    dispatch(editTodo(temp));
+  };
+
+  const handleToggle = (id) => {
+    dispatch(toggleTodo(id));
+  };
 
   return (
     <>
@@ -13,13 +23,32 @@ function AllTodos() {
         {todos.map((todo) => (
           <li
             key={todo.id}
-            className="flex items-center justify-between px-4 py-2 border-b rounded-md"
+            className={`flex items-center justify-between px-4 py-2 border-b rounded-md ${
+              todo.completed ? 'bg-green-400' : 'bg-white'
+            }`}
           >
-            <div className="flex justify-between items-center">
-              <span className="mr-2">{todo.text}</span>
+            <div className="flex items-center">
+              <input
+                type="checkbox"
+                checked={todo.completed}
+                onChange={() => handleToggle(todo.id)}
+                className="mr-2"
+              />
+              <span className={`mr-2 ${todo.completed ? 'line-through' : ''}`}>
+                {todo.text}
+              </span>
+            </div>
+            <div className="flex items-center">
+              <button
+                onClick={() => handleEdit(todo.id, todo.text)}
+                className="py-1 px-4 m-1 bg-gray-700 text-white rounded-lg hover:bg-gray-500 focus:outline-none focus:bg-blue-600"
+              >
+                U
+              </button>
               <button
                 onClick={() => dispatch(removeTodo(todo.id))}
-                className="text-xl font-bold text-red-500">
+                className="py-1 px-4 m-1 bg-red-400 text-white rounded-lg hover:bg-red-600 focus:outline-none focus:bg-blue-600"
+              >
                 X
               </button>
             </div>
